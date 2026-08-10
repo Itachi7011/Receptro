@@ -1,0 +1,54 @@
+# This runs the actual Postgres database container.
+#
+# Note: this sets up ONE copy (replica) of Postgres, which is fine for
+# testing/learning Kubernetes. A real production database setup usually
+# uses something more advanced (a "StatefulSet" with backups, replicas,
+# etc.) — but a single Deployment + PVC like this is the simplest way to
+# get a working database while you're learning.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: receptro
+spec:
+  # Only one copy — Postgres doesn't work correctly with multiple copies
+  # writing to the same disk at once.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          # Fill in the username/password/database name from the Secret
+          # file instead of writing them here directly.
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+          volumeMounts:
+            - name: postgres-storage
+              # This is the folder inside the container where Postgres
+              # actually keeps its data files.
+              mountPath: /var/lib/postgresql/data
+              # Postgres wants this exact sub-folder, not the mount
+              # point's top level.
+              subPath: postgres
+          # Kubernetes uses this to check the database is actually
+          # ready to accept connections before sending it traffic.
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "receptro"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-data

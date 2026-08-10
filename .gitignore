@@ -1,0 +1,47 @@
+# dependencies
+node_modules/
+**/node_modules/
+.pnp
+.pnp.js
+
+# env
+.env
+.env.local
+.env.*.local
+**/.env
+
+# build output
+dist/
+build/
+.next/
+out/
+**/dist/
+**/build/
+
+# prisma
+packages/db/dist/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# logs
+*.log
+npm-debug.log*
+logs/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# misc
+coverage/
+.turbo/
+*.tsbuildinfo
+workers/*/model_cache/

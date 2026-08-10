@@ -1,0 +1,18 @@
+# A "PersistentVolumeClaim" (PVC) is how we ask Kubernetes for a chunk of
+# disk storage that will NOT disappear if the database pod restarts or
+# gets moved to a different machine. Without this, all your data would
+# be wiped out every time the database container restarts.
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data
+  namespace: receptro
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      # How much disk space to set aside for the database. Increase this
+      # later if you run out of room — most clusters let you resize it.
+      storage: 2Gi

@@ -1,0 +1,16 @@
+# This Service gives the app's pods one stable address inside the
+# cluster, and spreads incoming requests across whichever pods are
+# currently healthy.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: receptro-app
+  namespace: receptro
+spec:
+  selector:
+    app: receptro-app
+  ports:
+    - port: 80
+      targetPort: 3000
+  type: ClusterIP

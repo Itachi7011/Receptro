@@ -1,0 +1,20 @@
+# A "Service" gives a Deployment's pods a stable network address that
+# doesn't change even if the pod restarts or moves. Other things inside
+# the cluster (like our app) reach the database using this Service's
+# name — "postgres" — instead of trying to track an individual pod.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: receptro
+spec:
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+  # "ClusterIP" means this is only reachable from INSIDE the cluster —
+  # which is what we want for a database. We don't want it open to the
+  # whole internet.
+  type: ClusterIP

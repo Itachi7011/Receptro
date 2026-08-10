@@ -1,0 +1,107 @@
+# This file lets you start the whole app (the Next.js app AND its
+# database) with one command:
+#
+#   docker compose up
+#
+# It's mainly for testing things locally on your own computer, or on a
+# single server. It defines two "services" (two containers) below:
+# "app" and "db".
+
+services:
+  # ---- The database -----------------------------------------------------
+  db:
+    # Use the official Postgres image instead of building our own.
+    image: postgres:16-alpine
+
+    # These environment variables are how the official Postgres image
+    # gets configured — it creates a database and user with these names
+    # the first time it starts up.
+    environment:
+      POSTGRES_USER: receptro
+      POSTGRES_PASSWORD: receptro_password
+      POSTGRES_DB: receptro
+
+    # This keeps the database's data on your computer's hard drive, in a
+    # Docker "volume" named receptro_db_data. Without this, all your data
+    # would disappear every time you stop and remove the container.
+    volumes:
+      - receptro_db_data:/var/lib/postgresql/data
+
+    # Makes the database reachable at localhost:5432 from your own
+    # computer too (handy if you want to poke at it with a DB tool).
+    ports:
+      - "5432:5432"
+
+    # Docker uses this to check "is the database actually ready yet?"
+    # before starting the app — see "depends_on" below.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U receptro"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ---- One-time database setup ------------------------------------------
+  # This service creates the tables the app needs (dealers, invoices,
+  # etc). It uses the "builder" stage from the Dockerfile, which still has
+  # all the tools needed to do this, instead of the small final app image.
+  #
+  # It does NOT start automatically with "docker compose up". Run it by
+  # hand, once, the first time you set this up:
+  #
+  #   docker compose run --rm migrate
+  #
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://receptro:receptro_password@db:5432/receptro
+    command: ["npx", "drizzle-kit", "push", "--force"]
+
+  # ---- The Next.js app ----------------------------------------------------
+  app:
+    # Build the image using the Dockerfile sitting right here in this
+    # folder, instead of downloading a pre-made image.
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Only start the app once the database says it's healthy.
+    depends_on:
+      db:
+        condition: service_healthy
+
+    # These are the environment variables the app reads when it runs
+    # (see src/lib/env.ts). "db" below is not a typo — inside Docker's
+    # own little network, containers can find each other by service
+    # name, so "db" means "the db service defined above".
+    environment:
+      DATABASE_URL: postgresql://receptro:receptro_password@db:5432/receptro
+      DATABASE_SSL: "false"
+      JWT_SECRET: change-this-to-a-long-random-string
+      JWT_EXPIRES_IN_DAYS: "7"
+      OTP_EXPIRES_IN_MINUTES: "10"
+      APP_NAME: Receptro
+      APP_URL: http://localhost:3000
+      NODE_ENV: production
+      # Leave these blank to use the console/local-disk fallbacks
+      # described in the README. Fill them in once you have real
+      # SendGrid / Cloudinary accounts.
+      SENDGRID_API_KEY: ""
+      SENDGRID_FROM_EMAIL: ""
+      CLOUDINARY_CLOUD_NAME: ""
+      CLOUDINARY_API_KEY: ""
+      CLOUDINARY_API_SECRET: ""
+
+    # Makes the app reachable at http://localhost:3000 on your computer.
+    ports:
+      - "3000:3000"
+
+# Volumes are Docker's way of saving data outside of the container, so it
+# survives even if you remove and recreate the container.
+volumes:
+  receptro_db_data:

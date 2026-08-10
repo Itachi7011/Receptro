@@ -1,0 +1,17 @@
+# A "ConfigMap" is for settings that are NOT sensitive — things that are
+# fine to see in plain text. Passwords and API keys go in a Secret
+# instead (see 07-app-secret.yaml).
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: receptro
+data:
+  APP_NAME: "Receptro"
+  # Change this once you have a real domain name for the app.
+  APP_URL: "https://receptro.example.com"
+  NODE_ENV: "production"
+  DATABASE_SSL: "false"
+  JWT_EXPIRES_IN_DAYS: "7"
+  OTP_EXPIRES_IN_MINUTES: "10"

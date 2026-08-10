@@ -1,0 +1,10 @@
+# A "namespace" is just a folder inside your Kubernetes cluster to keep
+# all of Receptro's stuff (app, database, etc.) grouped together and
+# separate from other things running in the same cluster.
+#
+# Every other file in this folder puts its resources into this namespace.
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: receptro

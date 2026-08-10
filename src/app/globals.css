@@ -1,0 +1,192 @@
+@import "tailwindcss";
+
+/* ── Theme: paper (default light) ─────────────────────────────────────── */
+:root,
+[data-theme="paper"] {
+  --color-paper: #f2f4f0;
+  --color-surface: #ffffff;
+  --color-ink: #14211e;
+  --color-ink-soft: #4a5a55;
+  --color-primary: #1f5d50;
+  --color-primary-dark: #123b33;
+  --color-primary-soft: #e4efe9;
+  --color-amber: #b3762a;
+  --color-amber-soft: #f6ead4;
+  --color-red: #a63f2c;
+  --color-red-soft: #f5e1db;
+  --color-green: #2f7d5b;
+  --color-green-soft: #e3f0e7;
+  --color-border: #dcdfd7;
+  --color-scheme: light;
+}
+
+/* ── Theme: midnight (dark, teal accent) ──────────────────────────────── */
+[data-theme="midnight"] {
+  --color-paper: #10161a;
+  --color-surface: #1a2226;
+  --color-ink: #e8ede9;
+  --color-ink-soft: #9fb0aa;
+  --color-primary: #4fd8b8;
+  --color-primary-dark: #2fae91;
+  --color-primary-soft: #16332c;
+  --color-amber: #e0a94f;
+  --color-amber-soft: #3a2d15;
+  --color-red: #e2725a;
+  --color-red-soft: #3a1f18;
+  --color-green: #5cc98f;
+  --color-green-soft: #17301f;
+  --color-border: #2a3439;
+  --color-scheme: dark;
+}
+
+/* ── Theme: slate (dark, cool blue accent) ────────────────────────────── */
+[data-theme="slate"] {
+  --color-paper: #0f1420;
+  --color-surface: #171e2e;
+  --color-ink: #e4e8f2;
+  --color-ink-soft: #8f9ab3;
+  --color-primary: #6d9bff;
+  --color-primary-dark: #4c7ae0;
+  --color-primary-soft: #1c2740;
+  --color-amber: #e0b355;
+  --color-amber-soft: #332a12;
+  --color-red: #ef7a70;
+  --color-red-soft: #35181a;
+  --color-green: #6bd2a0;
+  --color-green-soft: #16302a;
+  --color-border: #262f45;
+  --color-scheme: dark;
+}
+
+/* ── Theme: sepia (warm light, easy on the eyes) ──────────────────────── */
+[data-theme="sepia"] {
+  --color-paper: #f4ecdd;
+  --color-surface: #fbf6ec;
+  --color-ink: #3b2f22;
+  --color-ink-soft: #7a6a56;
+  --color-primary: #8a5a2b;
+  --color-primary-dark: #6b4520;
+  --color-primary-soft: #ecdcc0;
+  --color-amber: #b5791f;
+  --color-amber-soft: #f0dfb8;
+  --color-red: #a8432b;
+  --color-red-soft: #f0d9cf;
+  --color-green: #57733a;
+  --color-green-soft: #e3ead4;
+  --color-border: #ddccae;
+  --color-scheme: light;
+}
+
+/* ── Theme: contrast (high-contrast, accessibility-first) ─────────────── */
+[data-theme="contrast"] {
+  --color-paper: #ffffff;
+  --color-surface: #ffffff;
+  --color-ink: #000000;
+  --color-ink-soft: #1a1a1a;
+  --color-primary: #003b2e;
+  --color-primary-dark: #00251d;
+  --color-primary-soft: #d6ece6;
+  --color-amber: #6b4300;
+  --color-amber-soft: #fde9c2;
+  --color-red: #8a0000;
+  --color-red-soft: #ffdcdc;
+  --color-green: #0b5c2e;
+  --color-green-soft: #d7f0df;
+  --color-border: #000000;
+  --color-scheme: light;
+}
+
+@theme inline {
+  --color-paper: var(--color-paper);
+  --color-surface: var(--color-surface);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-primary: var(--color-primary);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-primary-soft: var(--color-primary-soft);
+  --color-amber: var(--color-amber);
+  --color-amber-soft: var(--color-amber-soft);
+  --color-red: var(--color-red);
+  --color-red-soft: var(--color-red-soft);
+  --color-green: var(--color-green);
+  --color-green-soft: var(--color-green-soft);
+  --color-border: var(--color-border);
+
+  --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", ui-serif, serif;
+  --font-sans:
+    ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-ledger:
+    ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, Consolas, monospace;
+}
+
+html {
+  color-scheme: var(--color-scheme);
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-ledger {
+  font-family: var(--font-ledger);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Signature element: a ledger rule under headings, like an underlined
+   account heading in a physical ledger book. */
+.ledger-heading {
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+.ledger-heading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 3rem;
+  background: var(--color-primary);
+}
+
+.status-strip {
+  border-left-width: 3px;
+  border-left-style: solid;
+}
+
+/* Accessibility: consistent, visible focus ring for keyboard navigation
+   across every interactive element, regardless of theme. */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--color-primary);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0 0 0.375rem 0;
+}
+.skip-link:focus {
+  left: 0;
+}

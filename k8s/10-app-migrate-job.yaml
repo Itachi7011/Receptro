@@ -1,0 +1,51 @@
+# A "Job" runs a container ONE TIME to do a task, then stops (unlike a
+# Deployment, which keeps its containers running all the time). We use
+# it here to create the app's database tables.
+#
+# This needs an image that still has the full project + drizzle-kit in
+# it (our small, final app image doesn't — it was trimmed down on
+# purpose). Build that image using the "builder" stage of the Dockerfile:
+#
+#   docker build --target builder -t your-registry-username/receptro-migrator:latest .
+#   docker push your-registry-username/receptro-migrator:latest
+#
+# Then run this Job with:
+#
+#   kubectl apply -f k8s/10-app-migrate-job.yaml
+#
+# Check that it worked with:
+#
+#   kubectl get jobs -n receptro
+#   kubectl logs -n receptro job/receptro-migrate
+#
+# If you need to run it again later (e.g. after changing the database
+# schema), delete the old Job first, because Kubernetes won't let you
+# re-run a Job with the same name:
+#
+#   kubectl delete job receptro-migrate -n receptro
+#   kubectl apply -f k8s/10-app-migrate-job.yaml
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: receptro-migrate
+  namespace: receptro
+spec:
+  # If it fails, try again up to 2 more times before giving up.
+  backoffLimit: 2
+  template:
+    spec:
+      containers:
+        - name: migrate
+          # CHANGE THIS — see the note above about building this image.
+          image: your-registry-username/receptro-migrator:latest
+          command: ["npx", "drizzle-kit", "push", "--force"]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: DATABASE_URL
+      # Don't try to restart the pod itself if it fails — the Job
+      # (above) already handles retrying by starting a fresh pod.
+      restartPolicy: Never
