@@ -154,10 +154,10 @@ k8s/                       # Kubernetes manifests (see DEPLOYMENT.md)
 git clone https://github.com/Itachi7011/Receptro.git
 cd Receptro
 npm install
-cp .env .env
+cp .env.example .env
 ```
 
-Edit `.env` (full variable reference: [`.env`](.env)):
+Edit `.env` (full variable reference: [`.env.example`](.env)):
 
 - `DATABASE_URL` — your Postgres connection string
 - `DATABASE_SSL=true` if your provider requires SSL (Neon, Supabase, RDS —
@@ -191,7 +191,7 @@ Once configured, both switch over automatically — no code changes needed.
 
 ## Environment variables
 
-Full reference in [`.env`](.env). Only `DATABASE_URL` and
+Full reference in [`.env.example`](.env). Only `DATABASE_URL` and
 `JWT_SECRET` are required to run the app; everything else is optional and
 falls back gracefully (see above).
 
@@ -235,7 +235,7 @@ tracked in the [Roadmap](#roadmap).
 
 See [`DEPLOYMENT.md`](DEPLOYMENT.md) for Docker Compose and Kubernetes.
 The app also runs on any Node hosting platform (e.g. Vercel) — set the
-environment variables from `.env` and point `DATABASE_URL` at a
+environment variables from `.env.example` and point `DATABASE_URL` at a
 managed Postgres instance.
 
 ## Security
